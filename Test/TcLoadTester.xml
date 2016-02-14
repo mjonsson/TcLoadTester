@@ -1,0 +1,291 @@
+<application>
+	<globals>
+		<!-- How long time to wait between each start of new worker thread -->
+		<setting name="start_delay" value="10"/>
+		<!-- How long time to wait between stopping each worker thread -->
+		<setting name="stop_delay" value="1"/>
+		<!-- The default idle time after each module has been executed
+		specified locally in the module configuration -->
+		<setting name="sleep" value="[RandNr(10,20]"/>
+		<!-- Path to output .csv-file -->
+		<!--<setting name="data_file" value="C:/Temp/output.csv"/>-->
+		<!-- How many times shall a module retry a failed action -->
+		<setting name="retry_count" value="3"/>
+		<!-- How long shall a module wait before retrying action -->
+		<setting name="retry_interval" value="60"/>
+		<!-- Enable MBean counters -->
+		<setting name="enable_mbeans" value="true"/>
+		<!-- The default SOA property policy to use for all operations -->
+		<setting name="property_policy" value="Empty"/>
+	</globals>
+	<!-- This section contains all available modules -->
+	<modules>
+		<!-- Module that logs into Teamcenter -->
+		<module id="login1" type="Login">
+			<settings>
+				<!-- This is the webtier web address -->
+				<setting name="endpoint" value="http://localhost:8080/tc"/>
+				<!-- The Teamcenter user to login as -->
+				<setting name="user" value="infodba"/>
+				<!-- The Teamcenter password for the defined user -->
+				<setting name="password" value="infodba"/>
+				<!-- The Teamcenter group to login as -->
+				<setting name="group" value="dba"/>
+				<!-- The Teamcenter role to login as -->
+				<setting name="role" value="DBA"/>
+				<!-- There are 3 different values to use for session discriminator
+				     [RandomNew] - Will generate a new unique discriminator for each login
+				     [Random] - Will generate a new unique discriminator for the first login. The same discriminator
+				     will be used for the forthcoming logins within the same worker.
+				     User defined string - This string will be used as discriminator for each login.
+				--> 
+				<setting name="discriminator" value="[RandomNew]"/>
+				<!-- Log into Teamcenter with bypass flag set or not set -->
+				<setting name="bypass" value="false"/>
+				<!-- If proxy server is being used, this can be entered here -->
+				<setting name="proxyhost" value=""/>
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="5"/>
+			</settings>
+		</module>
+		<!-- Module that executes a "Teamcenter" ping -->
+		<module id="Ping" type="Ping">
+			<settings>
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="[RandNr(2,5)]"/>
+			</settings>
+		</module>
+		<module id="FMS Download" type="FMSDownload">
+			<settings>
+				<!-- The idle time after this module has been executed -->
+				<setting name="dataset_uid" value="ANEAAARaoKsnXD"/>
+				<!-- The idle time after this module has been executed -->
+				<setting name="fms_url" value="http://localhost:4744"/>
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="60"/>
+			</settings>
+		</module>
+		<!-- Module that executes a saved query -->
+		<module id="query1" type="SavedQuery">
+			<settings>
+				<!-- Query section -->
+				<!-- The Teamcenter saved query object to use -->
+				<setting name="saved_query" value="Item ID"/>
+				<!-- The query input fields to use. Can be comma-separated. -->
+				<setting name="query_entries" value="Item ID"/>
+				<!-- The query values. Can be comma-separated. -->
+				<setting name="query_values" value="*"/>
+				<!--<setting name="query_values" value="*[RandNr(0,99)]*"/>-->
+				<!-- The number of times to run this query on the server-side.
+				     The result from each query will be appended to the next. -->
+				<setting name="query_batch" value="1"/>
+				<!-- The maximum number of objects each query_batch are allowed to return -->
+				<setting name="max_return" value="0"/>
+				<!-- General section -->
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="10"/>
+				<!-- The SOA property policy to use for this operation -->
+				<setting name="property_policy" value="Default"/>
+			</settings>
+		</module>
+		<!-- Module that extends a saved query module followed up by where referenced search -->
+		<module id="referenced1" type="WhereReferenced">
+			<settings>
+				<!-- Query section -->
+				<!-- The Teamcenter saved query object to use -->
+				<setting name="saved_query" value="Item Revision..."/>
+				<!-- The query input fields to use. Can be comma-separated. -->
+				<setting name="query_entries" value="Item ID"/>
+				<!-- The query values. Can be comma-separated. -->
+				<setting name="query_values" value="*[RandNr(0,99)]*"/>
+				<!-- The number of times to run this query on the server-side.
+				     The result from each query will be appended to the next. -->
+				<setting name="query_batch" value="100"/>
+				<!-- The maximum number of objects each query_batch are allowed to return -->
+				<setting name="max_return" value="0"/>
+				<!-- Where referenced secion -->
+				<!-- Defines how many times where referenced is to be iterated. (0 = infinite) -->
+				<setting name="reference_levels" value="5"/>
+				<!-- General section -->
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="[RandNr(5,10)]"/>
+				<!-- The SOA property policy to use for this operation -->
+				<setting name="property_policy" value="[RandOpt(Default,Empty)]"/>
+			</settings>
+		</module>
+		<!-- Module that extends a saved query module followed up by where used search -->
+		<module id="used1" type="WhereUsed">
+			<settings>
+				<!-- Query section -->
+				<!-- The Teamcenter saved query object to use -->
+				<setting name="saved_query" value="Item Revision..."/>
+				<!-- The query input fields to use. Can be comma-separated. -->
+				<setting name="query_entries" value="Item ID,Revision"/>
+				<!-- The query values. Can be comma-separated. -->
+				<setting name="query_values" value="000040,A"/>
+				<!-- The number of times to run this query on the server-side.
+				     The result from each query will be appended to the next. -->
+				<setting name="query_batch" value="1"/>
+				<!-- The maximum number of objects each query_batch are allowed to return -->
+				<setting name="max_return" value="0"/>
+				<!-- Revision rule to use for where used search -->
+				<setting name="revision_rule" value=""/>
+				<!-- Defines how many times where used is to be iterated (0 = infinite) -->
+				<setting name="parent_levels" value="5"/>
+				<!-- Perform precise or imprecise where used search -->
+				<setting name="precise_search" value="false"/>
+				<!-- General section -->
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="[RandNr(5,10)]"/>
+				<!-- The SOA property policy to use for this operation -->
+				<setting name="property_policy" value="Empty"/>
+			</settings>
+		</module>
+		<!-- Module that expands a structure -->
+		<module id="expand1" type="ExpandStructure">
+			<settings>
+				<!-- Structure section -->
+				<!-- The item revision to expand the structure of -->
+				<setting name="item_revision" value="000038/A/Item"/>
+				<!-- The revision rule to use for structure expansion -->
+				<setting name="revision_rule" value="Latest Working"/>
+				<!-- The type of structure object to use for structure expansion -->
+				<setting name="view_type" value="BOMView"/>
+				<!-- How many levels to expand (true = all levels, false = one level) -->
+				<setting name="all_levels" value="true"/>
+				<!-- General section -->
+				<!-- The idle time after this module has been executed -->
+				<setting name="sleep" value="60"/>
+				<!-- The SOA property policy to use for this operation -->
+				<setting name="property_policy" value="Empty"/>
+			</settings>
+		</module>
+		<!-- Module that logs out of Teamcenter -->
+		<module id="logout" type="Logout">
+			<settings>
+				<setting name="sleep" value="5"/>
+			</settings>
+		</module>
+	</modules>
+	<!-- This section contains all worker definitions. Each worker is run in a separate
+	runtime thread within the application. You can add as many workers as you like. -->
+	<workers>
+		<worker id="Worker 1">
+			<settings>
+				<setting name="cron" value="25 * * * *"/>
+				<setting name="iterations" value="1"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<mod_occ id="Where Used" ref="used1"/>
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout">
+					<settings>
+						<setting name="sleep" value="0"/>
+					</settings>
+				</mod_occ>
+			</sequence>
+		</worker>
+		<worker id="Worker 2">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<mod_occ id="Where Used" ref="used1"/>
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 3">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<!--<mod_occ id="Where Used" ref="used1"/>-->
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<mod_occ id="Saved Query" ref="query1"/>
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 4">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<!--<mod_occ id="Where Used" ref="used1"/>-->
+				<mod_occ id="FMS Download" ref="FMS Download"/>
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 5">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<mod_occ id="Where Used" ref="used1"/>
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 6">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<mod_occ id="Where Used" ref="used1"/>
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 7">
+			<settings>
+				<setting name="iterations" value="0"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<!--<mod_occ id="Where Used" ref="used1"/>-->
+				<!--<mod_occ id="FMS Download" ref="FMS Download"/>-->
+				<mod_occ id="Saved Query" ref="query1"/>
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+		<worker id="Worker 8">
+			<settings>
+				<setting name="iterations" value="10"/>
+			</settings>
+			<sequence>
+				<mod_occ id="Login" ref="login1"/>
+				<!--<mod_occ id="Ping" ref="Ping"/>-->
+				<!--<mod_occ id="Where Used" ref="used1"/>-->
+				<mod_occ id="FMS Download" ref="FMS Download"/>
+				<!--<mod_occ id="Saved Query" ref="query1"/>-->
+				<!--<mod_occ id="Expand Structure" ref="expand1"/>-->
+				<mod_occ id="Logout" ref="logout"/>
+			</sequence>
+		</worker>
+	</workers>
+</application>
