@@ -3,3 +3,6 @@
 Libs/
 *.mdmp
 TcLoadTester/.settings/
+TcLoadTester.jar
+Dist.jar
+cron4j-2.2.5/
